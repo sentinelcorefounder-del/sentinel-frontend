@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 
-// ✅ SINGLE SOURCE OF TRUTH
 const API_URL = "https://sentinel-ai1.onrender.com";
 
 export default function Home() {
@@ -34,87 +33,57 @@ export default function Home() {
       });
 
       const data = await res.json();
-      console.log("API RESPONSE:", data);
-
       setResult(data);
     } catch (error) {
-      console.error("ERROR:", error);
+      console.error(error);
     }
 
     setLoading(false);
   };
 
   return (
-    <main className="min-h-screen bg-gray-100 p-10">
-      <div className="max-w-5xl mx-auto">
+    <main className="min-h-screen bg-gray-100 flex justify-center items-center p-6">
+      <div className="w-full max-w-4xl space-y-6">
 
-        {/* Header */}
-        <div className="flex items-center gap-4 mb-8 bg-white p-4 rounded shadow">
+        {/* HEADER */}
+        <div className="flex items-center gap-4 bg-white p-4 rounded shadow">
           <img
             src="/sentinel-logo.png"
-            alt="Sentinel Logo"
-            className="h-20 object-contain"
+            className="h-12 w-auto object-contain"
           />
-
           <div>
-            <h1 className="text-2xl font-bold text-gray-800">
-              Sentinel
-            </h1>
+            <h1 className="text-xl font-bold">Sentinel</h1>
             <p className="text-sm text-gray-500">
               Diabetic Retinopathy Screening
             </p>
           </div>
         </div>
 
-        {/* Upload */}
-        <div className="bg-white border border-gray-200 p-6 rounded-lg shadow-md mb-6">
-          <p className="text-gray-700 font-medium mb-2">
-            Upload retinal fundus image
-          </p>
-
-          <div className="flex items-center gap-4">
-            <input type="file" onChange={handleUpload} />
-
-            <button
-              onClick={analyzeImage}
-              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded"
-            >
-              Analyze
-            </button>
-          </div>
-
-          {/* 🔥 LOADING STATE */}
-          {loading && (
-            <p className="mt-4 text-blue-600">
-              ⏳ Analyzing image... (server may take a few seconds to wake up)
-            </p>
-          )}
+        {/* UPLOAD */}
+        <div className="bg-white p-4 rounded shadow flex gap-4 items-center">
+          <input type="file" onChange={handleUpload} />
+          <button
+            onClick={analyzeImage}
+            className="bg-blue-600 text-white px-4 py-2 rounded"
+          >
+            Analyze
+          </button>
         </div>
 
-        {/* ⚠️ WARNINGS */}
-        {result?.prediction === "Invalid image" && (
-          <div className="bg-yellow-100 p-4 rounded mb-6 text-yellow-800">
-            ⚠️ This is not a retinal fundus image
+        {/* LOADING */}
+        {loading && (
+          <div className="text-center text-gray-600">
+            ⏳ Analyzing... (first run may take time)
           </div>
         )}
 
-        {result?.prediction === "Uncertain image" && (
-          <div className="bg-orange-100 p-4 rounded mb-6 text-orange-800">
-            ⚠️ Image unclear — please upload a better quality retinal image
-          </div>
-        )}
-
-        {/* IMAGE VIEW */}
+        {/* IMAGE + HEATMAP */}
         {(preview || result) && (
-          <div className="bg-white p-6 rounded shadow mb-6">
+          <div className="bg-white p-6 rounded shadow flex justify-center">
 
-            <h2 className="font-semibold mb-4 text-center">
-              AI Analysis
-            </h2>
+            <div className="relative w-[350px] h-[350px] bg-black rounded overflow-hidden">
 
-            <div className="relative w-[350px] h-[350px] mx-auto bg-black rounded overflow-hidden flex items-center justify-center">
-
-              {/* Base Image */}
+              {/* BASE IMAGE */}
               <img
                 src={
                   result?.processed_image_url
@@ -124,7 +93,7 @@ export default function Home() {
                 className="absolute inset-0 w-full h-full object-contain"
               />
 
-              {/* Heatmap */}
+              {/* HEATMAP */}
               {result?.heatmap_url && (
                 <img
                   src={`${API_URL}${result.heatmap_url}?t=${Date.now()}`}
@@ -134,91 +103,67 @@ export default function Home() {
               )}
 
             </div>
+          </div>
+        )}
 
-            {/* Slider */}
-            {result?.heatmap_url && (
-              <div className="mt-4">
-                <label className="text-sm text-gray-600">
-                  Heatmap Opacity: {(opacity * 100).toFixed(0)}%
-                </label>
-
-                <input
-                  type="range"
-                  min="0"
-                  max="1"
-                  step="0.1"
-                  value={opacity}
-                  onChange={(e) => setOpacity(Number(e.target.value))}
-                  className="w-full mt-2"
-                />
-              </div>
-            )}
-
+        {/* SLIDER */}
+        {result?.heatmap_url && (
+          <div className="bg-white p-4 rounded shadow">
+            <label className="text-sm text-gray-600">
+              Heatmap Opacity: {(opacity * 100).toFixed(0)}%
+            </label>
+            <input
+              type="range"
+              min="0"
+              max="1"
+              step="0.1"
+              value={opacity}
+              onChange={(e) => setOpacity(Number(e.target.value))}
+              className="w-full mt-2"
+            />
           </div>
         )}
 
         {/* RESULTS */}
-        {result &&
-          result.prediction !== "Invalid image" &&
-          result.prediction !== "Uncertain image" && (
-            <div className="mt-8">
+        {result && (
+          <div className="space-y-4">
 
-              <div
-                className={`p-6 rounded shadow text-white ${
-                  result.prediction === "Referable DR"
-                    ? "bg-red-600"
-                    : "bg-green-600"
-                }`}
-              >
-                <h2 className="text-2xl font-bold">
-                  {result.prediction}
-                </h2>
-
-                <p className="mt-2 text-lg">
-                  {result.prediction === "Referable DR"
-                    ? "Referral recommended"
-                    : "Routine monitoring"}
-                </p>
-              </div>
-
-              {/* Safety Warning */}
-              {result.prediction === "No Referable DR" && (
-                <p className="mt-2 text-xs text-red-500">
-                  ⚠️ Absence of referable DR does not rule out other eye conditions.
-                </p>
-              )}
-
-              {/* Confidence */}
-              <div className="mt-4 bg-white p-4 rounded shadow">
-                <p className="font-semibold">Confidence</p>
-
-                <div className="w-full bg-gray-200 rounded h-4 mt-2">
-                  <div
-                    className="bg-blue-600 h-4 rounded"
-                    style={{ width: `${result.confidence * 100}%` }}
-                  ></div>
-                </div>
-
-                <p className="mt-2 text-sm text-gray-600">
-                  {(result.confidence * 100).toFixed(1)}%
-                </p>
-              </div>
-
-              {/* Severity */}
-              <div className="mt-4 bg-white p-4 rounded shadow">
-                <p className="font-semibold">Severity</p>
-                <p className="text-lg text-gray-700 mt-1">
-                  {result.severity_label}
-                </p>
-              </div>
-
-              {/* Disclaimer */}
-              <p className="mt-6 text-sm text-gray-600 bg-gray-100 p-4 rounded border">
-                {result.disclaimer}
-              </p>
-
+            <div
+              className={`p-4 rounded text-white ${
+                result.prediction === "Referable DR"
+                  ? "bg-red-600"
+                  : "bg-green-600"
+              }`}
+            >
+              <h2 className="text-xl font-bold">{result.prediction}</h2>
             </div>
-          )}
+
+            {result.prediction === "No Referable DR" && (
+              <p className="text-xs text-red-500">
+                ⚠️ Absence of referable DR does not rule out other conditions.
+              </p>
+            )}
+
+            <div className="bg-white p-4 rounded shadow">
+              <p className="font-semibold">Confidence</p>
+              <div className="w-full bg-gray-200 h-4 rounded mt-2">
+                <div
+                  className="bg-blue-600 h-4 rounded"
+                  style={{ width: `${result.confidence * 100}%` }}
+                ></div>
+              </div>
+            </div>
+
+            <div className="bg-white p-4 rounded shadow">
+              <p className="font-semibold">Severity</p>
+              <p>{result.severity_label}</p>
+            </div>
+
+            <p className="text-sm text-gray-500 bg-gray-100 p-4 rounded">
+              {result.disclaimer}
+            </p>
+          </div>
+        )}
 
       </div>
     </main>
