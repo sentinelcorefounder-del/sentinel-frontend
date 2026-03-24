@@ -277,98 +277,111 @@ export default function Page() {
             </div>
           </section>
 
-          <aside className="space-y-6">
-            <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-              <div className="mb-5">
-                <h2 className="text-lg font-semibold text-slate-900">
-                  Analysis results
-                </h2>
-                <p className="text-sm text-slate-500">
-                  Model output and summary insights.
-                </p>
-              </div>
+<aside className="space-y-6">
+  <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+    <div className="mb-5">
+      <h2 className="text-lg font-semibold text-slate-900">
+        Analysis results
+      </h2>
+      <p className="text-sm text-slate-500">
+        Model output and summary insights.
+      </p>
+    </div>
 
-              {!result && !loading && (
-                <div className="rounded-2xl bg-slate-50 px-4 py-8 text-center text-sm text-slate-500 ring-1 ring-slate-200">
-                  Results will appear here after analysis.
-                </div>
-              )}
+    {!result && !loading && (
+      <div className="rounded-2xl bg-slate-50 px-4 py-8 text-center text-sm text-slate-500 ring-1 ring-slate-200">
+        Results will appear here after analysis.
+      </div>
+    )}
 
-              {loading && (
-                <div className="rounded-2xl border border-blue-200 bg-blue-50 px-4 py-8 text-center text-sm text-blue-700">
-                  Processing image and generating heatmap...
-                </div>
-              )}
+    {loading && (
+      <div className="rounded-2xl border border-blue-200 bg-blue-50 px-4 py-8 text-center text-sm text-blue-700">
+        Processing image and generating heatmap...
+      </div>
+    )}
 
-              {result && (
-                <div className="space-y-4">
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    <div className="rounded-2xl bg-slate-50 p-4">
-                      <p className="text-xs uppercase tracking-wide text-slate-500">
-                        Prediction
-                      </p>
-                      <p className="mt-1 text-base font-semibold text-slate-900">
-                        {predictionText}
-                      </p>
-                    </div>
+    {result && (
+      <div className="space-y-4">
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div className="rounded-2xl bg-slate-50 p-4">
+            <p className="text-xs uppercase tracking-wide text-slate-500">
+              Prediction
+            </p>
+            <p className="mt-1 text-base font-semibold text-slate-900">
+              {predictionText}
+            </p>
+          </div>
 
-                    <div className="rounded-2xl bg-slate-50 p-4">
-                      <p className="text-xs uppercase tracking-wide text-slate-500">
-                        Confidence
-                      </p>
-                      <p className="mt-1 text-base font-semibold text-slate-900">
-                        {confidenceText}
-                      </p>
-                    </div>
+          <div className="rounded-2xl bg-slate-50 p-4">
+            <p className="text-xs uppercase tracking-wide text-slate-500">
+              Confidence
+            </p>
+            <p className="mt-1 text-base font-semibold text-slate-900">
+              {confidenceText}
+            </p>
+          </div>
 
-                    <div className="rounded-2xl bg-slate-50 p-4">
-                      <p className="text-xs uppercase tracking-wide text-slate-500">
-                        Severity
-                      </p>
-                      <p className="mt-1 text-base font-semibold text-slate-900">
-                        {result.severity || "Unavailable"}
-                      </p>
-                    </div>
+          <div className="rounded-2xl bg-slate-50 p-4">
+            <p className="text-xs uppercase tracking-wide text-slate-500">
+              Severity
+            </p>
+            <p className="mt-1 text-base font-semibold text-slate-900">
+              {result.severity || "Unavailable"}
+            </p>
+          </div>
 
-                    <div className="rounded-2xl bg-slate-50 p-4">
-                      <p className="text-xs uppercase tracking-wide text-slate-500">
-                        Referable DR
-                      </p>
-                      <p className="mt-1 text-base font-semibold text-slate-900">
-                        {result.referable_dr === undefined
-                          ? "Unavailable"
-                          : result.referable_dr
-                            ? "Yes"
-                            : "No"}
-                      </p>
-                    </div>
-                  </div>
+          <div className="rounded-2xl bg-slate-50 p-4">
+            <p className="text-xs uppercase tracking-wide text-slate-500">
+              Referable DR
+            </p>
+            <p className="mt-1 text-base font-semibold text-slate-900">
+              {result.referable_dr === undefined
+                ? "Unavailable"
+                : result.referable_dr
+                ? "Yes"
+                : "No"}
+            </p>
+          </div>
+        </div>
 
-                  {result.warning && (
-                    <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-                      {result.warning}
-                    </div>
-                  )}
-                </div>
-              )}
-            </section>
+        {result.warning && (
+          <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+            {result.warning}
+          </div>
+        )}
+      </div>
+    )}
+  </section>
 
-            <section className="rounded-3xl border border-amber-200 bg-amber-50 p-6 shadow-sm">
-              <h3 className="text-base font-semibold text-amber-900">
-                Clinical disclaimer
-              </h3>
-              <p className="mt-2 text-sm leading-6 text-amber-900">
-                Sentinel AI evaluates retinal images only for diabetic
-                retinopathy referral risk. It is not designed to detect,
-                diagnose, or rule out other retinal or ophthalmic conditions. As
-                a result, images with non-diabetic retinal abnormalities may
-                still be classified as referable or non-referable diabetic
-                retinopathy. This tool is intended for research and decision
-                support only and must not replace clinical assessment by a
-                qualified eye care professional.
-              </p>
-            </section>
-          </aside>
+  <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+    <h3 className="text-base font-semibold text-slate-900">Contact</h3>
+    <p className="mt-2 text-sm text-slate-600">
+      For enquiries, feedback, or partnership interest, please contact:
+    </p>
+
+    <a
+      href="mailto:sentinel.core.founder@gmail.com"
+      className="mt-4 inline-block text-sm font-medium text-blue-600 hover:text-blue-700 hover:underline"
+    >
+      sentinel.core.founder@gmail.com
+    </a>
+  </section>
+
+  <section className="rounded-3xl border border-amber-200 bg-amber-50 p-6 shadow-sm">
+    <h3 className="text-base font-semibold text-amber-900">
+      Clinical disclaimer
+    </h3>
+    <p className="mt-2 text-sm leading-6 text-amber-900">
+      Sentinel AI evaluates retinal images only for diabetic retinopathy
+      referral risk. It is not designed to detect, diagnose, or rule out other
+      retinal or ophthalmic conditions. As a result, images with non-diabetic
+      retinal abnormalities may still be classified as referable or
+      non-referable diabetic retinopathy. This tool is intended for research and
+      decision support only and must not replace clinical assessment by a
+      qualified eye care professional.
+    </p>
+  </section>
+</aside>
         </div>
       </div>
     </main>
