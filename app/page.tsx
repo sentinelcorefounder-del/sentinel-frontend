@@ -68,7 +68,7 @@ export default function Page() {
 
     try {
       const formData = new FormData();
-      formData.append("file", file);
+      formData.append("image", file);
 
       const response = await fetch(`${API_URL}/analyze`, {
         method: "POST",
@@ -97,13 +97,14 @@ export default function Page() {
             <img
               src="/sentinel-logo.png"
               alt="Sentinel AI logo"
-              className="h-16 w-auto"
+              className="h-10 w-auto"
             />
           </div>
 
           <h1 className="text-4xl font-bold text-gray-900">Sentinel AI</h1>
           <p className="mt-3 text-lg text-gray-600">
-            Retinal image screening for diabetic retinopathy with AI-assisted analysis.
+            Retinal image screening for diabetic retinopathy with AI-assisted
+            analysis.
           </p>
         </div>
 
@@ -173,14 +174,18 @@ export default function Page() {
               <div className="space-y-4">
                 <div className="grid gap-3 sm:grid-cols-2">
                   <div className="rounded-xl bg-gray-50 p-4">
-                    <p className="text-xs uppercase tracking-wide text-gray-500">Prediction</p>
+                    <p className="text-xs uppercase tracking-wide text-gray-500">
+                      Prediction
+                    </p>
                     <p className="mt-1 text-lg font-semibold text-gray-900">
                       {result.prediction || result.result || "Unavailable"}
                     </p>
                   </div>
 
                   <div className="rounded-xl bg-gray-50 p-4">
-                    <p className="text-xs uppercase tracking-wide text-gray-500">Confidence</p>
+                    <p className="text-xs uppercase tracking-wide text-gray-500">
+                      Confidence
+                    </p>
                     <p className="mt-1 text-lg font-semibold text-gray-900">
                       {typeof result.confidence === "number"
                         ? `${(result.confidence * 100).toFixed(1)}%`
@@ -189,14 +194,18 @@ export default function Page() {
                   </div>
 
                   <div className="rounded-xl bg-gray-50 p-4">
-                    <p className="text-xs uppercase tracking-wide text-gray-500">Severity</p>
+                    <p className="text-xs uppercase tracking-wide text-gray-500">
+                      Severity
+                    </p>
                     <p className="mt-1 text-lg font-semibold text-gray-900">
                       {result.severity || "Unavailable"}
                     </p>
                   </div>
 
                   <div className="rounded-xl bg-gray-50 p-4">
-                    <p className="text-xs uppercase tracking-wide text-gray-500">Referable DR</p>
+                    <p className="text-xs uppercase tracking-wide text-gray-500">
+                      Referable DR
+                    </p>
                     <p className="mt-1 text-lg font-semibold text-gray-900">
                       {result.referable_dr === undefined
                         ? "Unavailable"
@@ -229,7 +238,8 @@ export default function Page() {
                 )}
 
                 <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 text-sm leading-6 text-blue-900">
-                  Clinical disclaimer: This tool is for research and decision support only.
+                  Clinical disclaimer: This tool is for research and decision
+                  support only.
                 </div>
               </div>
             )}
