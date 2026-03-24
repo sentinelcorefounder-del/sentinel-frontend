@@ -8,4 +8,8 @@ module.exports = {
     extend: {},
   },
   plugins: [],
+<<<<<<< HEAD
 };
+=======
+};
+>>>>>>> 2e38141 (fix tailwind + UI)
