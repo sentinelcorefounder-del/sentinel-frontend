@@ -210,21 +210,28 @@ export default function Page() {
 
               <div className="flex min-h-[460px] items-center justify-center rounded-3xl bg-white p-4 ring-1 ring-slate-200">
                 {previewUrl ? (
-                  <div className="relative inline-block">
-                    <img
-                      src={previewUrl}
-                      alt="Retinal preview"
-                      className="block max-h-[520px] w-auto rounded-2xl object-contain"
-                    />
-
-                    {heatmapSrc && (
+                  <div className="inline-block">
+                    <div className="relative overflow-hidden rounded-2xl">
                       <img
-                        src={heatmapSrc}
-                        alt="Heatmap overlay"
-                        className="pointer-events-none absolute left-0 top-0 h-full w-full rounded-2xl object-contain"
-                        style={{ opacity: overlayOpacity / 100 }}
+                        src={previewUrl}
+                        alt="Retinal preview"
+                        className="block max-h-[520px] max-w-full rounded-2xl"
                       />
-                    )}
+
+                      {heatmapSrc && (
+                        <img
+                          src={heatmapSrc}
+                          alt="Heatmap overlay"
+                          className="pointer-events-none absolute inset-0 rounded-2xl"
+                          style={{
+                            opacity: overlayOpacity / 100,
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "fill",
+                          }}
+                        />
+                      )}
+                    </div>
                   </div>
                 ) : (
                   <div className="text-center">
