@@ -9,16 +9,16 @@ type AnalysisResponse = {
   confidence?: number | string;
   severity?: string;
   referable_dr?: boolean;
-  result?: string;
-  heatmap_url?: string;
   heatmap?: string;
+  heatmap_url?: string;
   warning?: string;
   error?: string;
+  result?: string;
 };
 
 export default function Page() {
   const [file, setFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string>("");
+  const [previewUrl, setPreviewUrl] = useState("");
   const [result, setResult] = useState<AnalysisResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -26,8 +26,9 @@ export default function Page() {
   const heatmapSrc = useMemo(() => {
     if (!result) return "";
     if (result.heatmap_url) {
-      if (result.heatmap_url.startsWith("http")) return result.heatmap_url;
-      return `${API_URL}${result.heatmap_url}`;
+      return result.heatmap_url.startsWith("http")
+        ? result.heatmap_url
+        : `${API_URL}${result.heatmap_url}`;
     }
     if (result.heatmap) return result.heatmap;
     return "";
@@ -35,8 +36,8 @@ export default function Page() {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selected = e.target.files?.[0];
-    setResult(null);
     setError("");
+    setResult(null);
 
     if (!selected) {
       setFile(null);
@@ -45,14 +46,7 @@ export default function Page() {
     }
 
     if (!selected.type.startsWith("image/")) {
-      setError("Please upload a valid image file.");
-      setFile(null);
-      setPreviewUrl("");
-      return;
-    }
-
-    if (selected.size > 10 * 1024 * 1024) {
-      setError("File size must be under 10MB.");
+      setError("Please upload an image file.");
       setFile(null);
       setPreviewUrl("");
       return;
@@ -64,7 +58,7 @@ export default function Page() {
 
   const handleAnalyze = async () => {
     if (!file) {
-      setError("Please choose a retinal image first.");
+      setError("Please select a retinal image first.");
       return;
     }
 
@@ -76,22 +70,20 @@ export default function Page() {
       const formData = new FormData();
       formData.append("file", file);
 
-      const res = await fetch(`${API_URL}/analyze`, {
+      const response = await fetch(`${API_URL}/analyze`, {
         method: "POST",
         body: formData,
       });
 
-      const data = await res.json();
+      const data = await response.json();
 
-      if (!res.ok) {
+      if (!response.ok) {
         throw new Error(data?.error || "Analysis failed.");
       }
 
       setResult(data);
     } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "Something went wrong.";
-      setError(message);
+      setError(err instanceof Error ? err.message : "Something went wrong.");
     } finally {
       setLoading(false);
     }
@@ -101,10 +93,17 @@ export default function Page() {
     <main className="min-h-screen bg-gray-100 px-4 py-10">
       <div className="mx-auto max-w-5xl">
         <div className="mb-8 text-center">
+          <div className="mb-4 flex justify-center">
+            <img
+              src="/sentinel-logo.png"
+              alt="Sentinel AI logo"
+              className="h-16 w-auto"
+            />
+          </div>
+
           <h1 className="text-4xl font-bold text-gray-900">Sentinel AI</h1>
           <p className="mt-3 text-lg text-gray-600">
-            Retinal image screening for diabetic retinopathy with AI-assisted
-            prediction and heatmap visualization.
+            Retinal image screening for diabetic retinopathy with AI-assisted analysis.
           </p>
         </div>
 
@@ -124,7 +123,7 @@ export default function Page() {
             <button
               onClick={handleAnalyze}
               disabled={loading || !file}
-              className="w-full rounded-lg bg-black px-4 py-3 text-white transition disabled:cursor-not-allowed disabled:opacity-50"
+              className="w-full rounded-lg bg-black px-4 py-3 text-white disabled:cursor-not-allowed disabled:opacity-50"
             >
               {loading ? "Analyzing..." : "Analyze image"}
             </button>
@@ -139,7 +138,6 @@ export default function Page() {
               <h3 className="mb-3 text-sm font-medium uppercase tracking-wide text-gray-500">
                 Preview
               </h3>
-
               <div className="flex min-h-[280px] items-center justify-center rounded-2xl border border-dashed border-gray-300 bg-gray-50 p-4">
                 {previewUrl ? (
                   <img
@@ -148,9 +146,7 @@ export default function Page() {
                     className="max-h-[340px] rounded-xl object-contain"
                   />
                 ) : (
-                  <p className="text-sm text-gray-500">
-                    No image selected yet.
-                  </p>
+                  <p className="text-sm text-gray-500">No image selected yet.</p>
                 )}
               </div>
             </div>
@@ -177,40 +173,30 @@ export default function Page() {
               <div className="space-y-4">
                 <div className="grid gap-3 sm:grid-cols-2">
                   <div className="rounded-xl bg-gray-50 p-4">
-                    <p className="text-xs uppercase tracking-wide text-gray-500">
-                      Prediction
-                    </p>
+                    <p className="text-xs uppercase tracking-wide text-gray-500">Prediction</p>
                     <p className="mt-1 text-lg font-semibold text-gray-900">
                       {result.prediction || result.result || "Unavailable"}
                     </p>
                   </div>
 
                   <div className="rounded-xl bg-gray-50 p-4">
-                    <p className="text-xs uppercase tracking-wide text-gray-500">
-                      Confidence
-                    </p>
+                    <p className="text-xs uppercase tracking-wide text-gray-500">Confidence</p>
                     <p className="mt-1 text-lg font-semibold text-gray-900">
-                      {result.confidence !== undefined
-                        ? typeof result.confidence === "number"
-                          ? `${(result.confidence * 100).toFixed(1)}%`
-                          : result.confidence
-                        : "Unavailable"}
+                      {typeof result.confidence === "number"
+                        ? `${(result.confidence * 100).toFixed(1)}%`
+                        : result.confidence || "Unavailable"}
                     </p>
                   </div>
 
                   <div className="rounded-xl bg-gray-50 p-4">
-                    <p className="text-xs uppercase tracking-wide text-gray-500">
-                      Severity
-                    </p>
+                    <p className="text-xs uppercase tracking-wide text-gray-500">Severity</p>
                     <p className="mt-1 text-lg font-semibold text-gray-900">
                       {result.severity || "Unavailable"}
                     </p>
                   </div>
 
                   <div className="rounded-xl bg-gray-50 p-4">
-                    <p className="text-xs uppercase tracking-wide text-gray-500">
-                      Referable DR
-                    </p>
+                    <p className="text-xs uppercase tracking-wide text-gray-500">Referable DR</p>
                     <p className="mt-1 text-lg font-semibold text-gray-900">
                       {result.referable_dr === undefined
                         ? "Unavailable"
@@ -243,9 +229,7 @@ export default function Page() {
                 )}
 
                 <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 text-sm leading-6 text-blue-900">
-                  Clinical disclaimer: This tool is for research and decision
-                  support only. It is not a substitute for diagnosis by a
-                  qualified clinician.
+                  Clinical disclaimer: This tool is for research and decision support only.
                 </div>
               </div>
             )}
