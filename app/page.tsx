@@ -32,12 +32,15 @@ export default function Page() {
 
   const heatmapSrc = useMemo(() => {
     if (!result) return "";
+
     if (result.heatmap_url) {
       return result.heatmap_url.startsWith("http")
         ? result.heatmap_url
         : `${API_URL}${result.heatmap_url}`;
     }
+
     if (result.heatmap) return result.heatmap;
+
     return "";
   }, [result]);
 
@@ -62,6 +65,7 @@ export default function Page() {
     }
 
     if (previewUrl) URL.revokeObjectURL(previewUrl);
+
     setFile(selected);
     setPreviewUrl(URL.createObjectURL(selected));
   };
@@ -211,23 +215,23 @@ export default function Page() {
               <div className="flex min-h-[460px] items-center justify-center rounded-3xl bg-white p-4 ring-1 ring-slate-200">
                 {previewUrl ? (
                   <div className="inline-block">
-                    <div className="relative overflow-hidden rounded-2xl">
+                    <div className="relative inline-block overflow-hidden rounded-2xl">
                       <img
                         src={previewUrl}
                         alt="Retinal preview"
-                        className="block max-h-[520px] max-w-full rounded-2xl"
+                        className="block h-auto max-h-[520px] w-auto max-w-full rounded-2xl"
                       />
 
                       {heatmapSrc && (
                         <img
                           src={heatmapSrc}
                           alt="Heatmap overlay"
-                          className="pointer-events-none absolute inset-0 rounded-2xl"
+                          className="pointer-events-none absolute left-0 top-0 rounded-2xl"
                           style={{
                             opacity: overlayOpacity / 100,
                             width: "100%",
                             height: "100%",
-                            objectFit: "fill",
+                            objectFit: "cover",
                           }}
                         />
                       )}
@@ -334,8 +338,8 @@ export default function Page() {
                         {result.referable_dr === undefined
                           ? "Unavailable"
                           : result.referable_dr
-                          ? "Yes"
-                          : "No"}
+                            ? "Yes"
+                            : "No"}
                       </p>
                     </div>
                   </div>
