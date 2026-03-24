@@ -14,11 +14,6 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Sentinel AI",
-  description: "Diabetic Retinopathy Screening",
-};
-
 export default function RootLayout({
   children,
 }: {
