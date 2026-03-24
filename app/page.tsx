@@ -22,7 +22,7 @@ export default function Page() {
   const [result, setResult] = useState<AnalysisResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [overlayOpacity, setOverlayOpacity] = useState(55);
+  const [overlayOpacity, setOverlayOpacity] = useState(50);
 
   useEffect(() => {
     return () => {
@@ -61,16 +61,7 @@ export default function Page() {
       return;
     }
 
-    if (selected.size > 10 * 1024 * 1024) {
-      setError("Please upload an image smaller than 10MB.");
-      setFile(null);
-      if (previewUrl) URL.revokeObjectURL(previewUrl);
-      setPreviewUrl("");
-      return;
-    }
-
     if (previewUrl) URL.revokeObjectURL(previewUrl);
-
     setFile(selected);
     setPreviewUrl(URL.createObjectURL(selected));
   };
@@ -116,34 +107,33 @@ export default function Page() {
       : result?.confidence || "Unavailable";
 
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-900">
-      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+    <main className="min-h-screen bg-slate-50">
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <header className="mb-8 rounded-3xl border border-slate-200 bg-white px-6 py-5 shadow-sm">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div className="flex items-center gap-4">
               <img
                 src="/sentinel-logo.png"
                 alt="Sentinel AI logo"
-                className="h-10 w-10 rounded-xl object-contain ring-1 ring-slate-200"
+                className="h-12 w-12 rounded-xl object-contain"
               />
-
               <div>
                 <div className="flex items-center gap-3">
-                  <h1 className="text-2xl font-semibold tracking-tight">
+                  <h1 className="text-2xl font-semibold text-slate-900">
                     Sentinel AI
                   </h1>
-                  <span className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700">
+                  <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700 ring-1 ring-emerald-200">
                     AI Retinal Screening
                   </span>
                 </div>
                 <p className="mt-1 text-sm text-slate-600">
-                  Clean, research-focused diabetic retinopathy image analysis
-                  with prediction insights and heatmap overlay.
+                  Diabetic retinopathy screening with prediction insights and
+                  heatmap overlay.
                 </p>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 sm:flex">
+            <div className="flex gap-3">
               <div className="rounded-2xl bg-slate-50 px-4 py-3 text-sm">
                 <p className="text-slate-500">Mode</p>
                 <p className="font-medium text-slate-900">Single image</p>
@@ -158,19 +148,20 @@ export default function Page() {
           </div>
         </header>
 
-        <div className="grid gap-6 xl:grid-cols-[1.25fr_0.9fr]">
-          <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+        <div className="grid gap-6 xl:grid-cols-[1.35fr_0.85fr]">
+          <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
             <div className="mb-5 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
               <div>
-                <h2 className="text-lg font-semibold">Image workspace</h2>
+                <h2 className="text-lg font-semibold text-slate-900">
+                  Image workspace
+                </h2>
                 <p className="text-sm text-slate-500">
-                  Upload a retinal scan, analyze it, and review the heatmap
-                  overlay.
+                  Upload an image and review the heatmap directly on top of it.
                 </p>
               </div>
 
               <div className="flex flex-col gap-2 sm:flex-row">
-                <label className="inline-flex cursor-pointer items-center justify-center rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50">
+                <label className="cursor-pointer rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">
                   Choose image
                   <input
                     type="file"
@@ -183,7 +174,7 @@ export default function Page() {
                 <button
                   onClick={handleAnalyze}
                   disabled={loading || !file}
-                  className="inline-flex items-center justify-center rounded-xl bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {loading ? "Analyzing..." : "Analyze image"}
                 </button>
@@ -203,7 +194,7 @@ export default function Page() {
                     Retinal preview
                   </p>
                   <p className="text-xs text-slate-500">
-                    Base image with optional Grad-CAM overlay
+                    Base image with aligned Grad-CAM overlay
                   </p>
                 </div>
 
@@ -217,25 +208,23 @@ export default function Page() {
                 )}
               </div>
 
-              <div className="flex min-h-[420px] items-center justify-center rounded-3xl border border-dashed border-slate-300 bg-white p-4">
+              <div className="flex min-h-[460px] items-center justify-center rounded-3xl bg-white p-4 ring-1 ring-slate-200">
                 {previewUrl ? (
-                  <div className="relative flex h-full w-full items-center justify-center">
-                    <div className="relative inline-block max-h-[520px] max-w-full">
-                      <img
-                        src={previewUrl}
-                        alt="Retinal preview"
-                        className="block max-h-[520px] max-w-full rounded-2xl object-contain shadow-sm"
-                      />
+                  <div className="relative inline-block">
+                    <img
+                      src={previewUrl}
+                      alt="Retinal preview"
+                      className="block max-h-[520px] w-auto rounded-2xl object-contain"
+                    />
 
-                      {heatmapSrc && (
-                        <img
-                          src={heatmapSrc}
-                          alt="Heatmap overlay"
-                          className="pointer-events-none absolute inset-0 h-full w-full rounded-2xl object-contain"
-                          style={{ opacity: overlayOpacity / 100 }}
-                        />
-                      )}
-                    </div>
+                    {heatmapSrc && (
+                      <img
+                        src={heatmapSrc}
+                        alt="Heatmap overlay"
+                        className="pointer-events-none absolute left-0 top-0 h-full w-full rounded-2xl object-contain"
+                        style={{ opacity: overlayOpacity / 100 }}
+                      />
+                    )}
                   </div>
                 ) : (
                   <div className="text-center">
@@ -243,14 +232,14 @@ export default function Page() {
                       No image selected
                     </p>
                     <p className="mt-1 text-sm text-slate-500">
-                      Upload a retinal image to begin analysis.
+                      Upload a retinal image to begin.
                     </p>
                   </div>
                 )}
               </div>
 
               {heatmapSrc && (
-                <div className="mt-5 rounded-2xl border border-slate-200 bg-white p-4">
+                <div className="mt-5 rounded-2xl bg-white p-4 ring-1 ring-slate-200">
                   <div className="mb-3 flex items-center justify-between">
                     <label
                       htmlFor="overlayOpacity"
@@ -259,7 +248,7 @@ export default function Page() {
                       Adjust heatmap transparency
                     </label>
                     <span className="text-xs text-slate-500">
-                      0% = image only, 100% = full heatmap
+                      0% image only · 100% heatmap only
                     </span>
                   </div>
 
@@ -278,16 +267,18 @@ export default function Page() {
           </section>
 
           <aside className="space-y-6">
-            <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+            <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
               <div className="mb-5">
-                <h2 className="text-lg font-semibold">Analysis results</h2>
+                <h2 className="text-lg font-semibold text-slate-900">
+                  Analysis results
+                </h2>
                 <p className="text-sm text-slate-500">
                   Model output and summary insights.
                 </p>
               </div>
 
               {!result && !loading && (
-                <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-4 py-8 text-center text-sm text-slate-500">
+                <div className="rounded-2xl bg-slate-50 px-4 py-8 text-center text-sm text-slate-500 ring-1 ring-slate-200">
                   Results will appear here after analysis.
                 </div>
               )}
@@ -351,12 +342,13 @@ export default function Page() {
               )}
             </section>
 
-            <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
-              <h3 className="text-base font-semibold">Clinical disclaimer</h3>
+            <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+              <h3 className="text-base font-semibold text-slate-900">
+                Clinical disclaimer
+              </h3>
               <p className="mt-2 text-sm leading-6 text-slate-600">
-                This application is for research and decision-support purposes
-                only. It does not replace diagnosis or clinical judgement by a
-                qualified eye care professional.
+                This application is for research and decision-support only. It
+                does not replace diagnosis by a qualified clinician.
               </p>
             </section>
           </aside>
