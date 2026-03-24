@@ -22,6 +22,7 @@ export default function Page() {
   const [result, setResult] = useState<AnalysisResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [overlayOpacity, setOverlayOpacity] = useState(55);
 
   const heatmapSrc = useMemo(() => {
     if (!result) return "";
@@ -47,6 +48,13 @@ export default function Page() {
 
     if (!selected.type.startsWith("image/")) {
       setError("Please upload an image file.");
+      setFile(null);
+      setPreviewUrl("");
+      return;
+    }
+
+    if (selected.size > 10 * 1024 * 1024) {
+      setError("Please upload an image smaller than 10MB.");
       setFile(null);
       setPreviewUrl("");
       return;
@@ -90,25 +98,25 @@ export default function Page() {
   };
 
   return (
-    <main className="min-h-screen bg-gray-100 px-4 py-10">
-      <div className="mx-auto max-w-5xl">
+    <main className="min-h-screen bg-gray-100 px-4 py-8">
+      <div className="mx-auto max-w-6xl">
         <div className="mb-8 text-center">
-          <div className="mb-4 flex justify-center">
+          <div className="mb-3 flex justify-center">
             <img
               src="/sentinel-logo.png"
               alt="Sentinel AI logo"
-              className="h-10 w-auto"
+              className="h-8 w-auto object-contain"
             />
           </div>
 
-          <h1 className="text-4xl font-bold text-gray-900">Sentinel AI</h1>
-          <p className="mt-3 text-lg text-gray-600">
+          <h1 className="text-3xl font-bold text-gray-900">Sentinel AI</h1>
+          <p className="mt-2 text-base text-gray-600">
             Retinal image screening for diabetic retinopathy with AI-assisted
             analysis.
           </p>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-6 lg:grid-cols-2">
           <section className="rounded-2xl bg-white p-6 shadow-sm">
             <h2 className="mb-4 text-xl font-semibold text-gray-900">
               Upload retinal image
@@ -136,18 +144,64 @@ export default function Page() {
             )}
 
             <div className="mt-6">
-              <h3 className="mb-3 text-sm font-medium uppercase tracking-wide text-gray-500">
-                Preview
-              </h3>
-              <div className="flex min-h-[280px] items-center justify-center rounded-2xl border border-dashed border-gray-300 bg-gray-50 p-4">
-                {previewUrl ? (
-                  <img
-                    src={previewUrl}
-                    alt="Retinal preview"
-                    className="max-h-[340px] rounded-xl object-contain"
-                  />
-                ) : (
-                  <p className="text-sm text-gray-500">No image selected yet.</p>
+              <div className="mb-3 flex items-center justify-between">
+                <h3 className="text-sm font-medium uppercase tracking-wide text-gray-500">
+                  Image preview
+                </h3>
+
+                {heatmapSrc && (
+                  <span className="text-xs text-gray-500">
+                    Overlay opacity: {overlayOpacity}%
+                  </span>
+                )}
+              </div>
+
+              <div className="rounded-2xl border border-dashed border-gray-300 bg-gray-50 p-4">
+                <div className="flex min-h-[320px] items-center justify-center">
+                  {previewUrl ? (
+                    <div className="relative inline-block overflow-hidden rounded-xl">
+                      <img
+                        src={previewUrl}
+                        alt="Retinal preview"
+                        className="block max-h-[420px] max-w-full object-contain rounded-xl"
+                      />
+
+                      {heatmapSrc && (
+                        <img
+                          src={heatmapSrc}
+                          alt="Heatmap overlay"
+                          className="absolute inset-0 h-full w-full object-cover"
+                          style={{ opacity: overlayOpacity / 100 }}
+                        />
+                      )}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-gray-500">No image selected yet.</p>
+                  )}
+                </div>
+
+                {heatmapSrc && (
+                  <div className="mt-4">
+                    <label
+                      htmlFor="overlayOpacity"
+                      className="mb-2 block text-sm font-medium text-gray-700"
+                    >
+                      Adjust heatmap transparency
+                    </label>
+                    <input
+                      id="overlayOpacity"
+                      type="range"
+                      min="0"
+                      max="100"
+                      value={overlayOpacity}
+                      onChange={(e) => setOverlayOpacity(Number(e.target.value))}
+                      className="w-full"
+                    />
+                    <div className="mt-1 flex justify-between text-xs text-gray-500">
+                      <span>Visible image</span>
+                      <span>Strong heatmap</span>
+                    </div>
+                  </div>
                 )}
               </div>
             </div>
@@ -222,24 +276,10 @@ export default function Page() {
                   </div>
                 )}
 
-                {heatmapSrc && (
-                  <div>
-                    <h3 className="mb-3 text-sm font-medium uppercase tracking-wide text-gray-500">
-                      Grad-CAM heatmap
-                    </h3>
-                    <div className="rounded-2xl border border-gray-200 bg-gray-50 p-4">
-                      <img
-                        src={heatmapSrc}
-                        alt="Grad-CAM heatmap"
-                        className="max-h-[360px] w-full rounded-xl object-contain"
-                      />
-                    </div>
-                  </div>
-                )}
-
                 <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 text-sm leading-6 text-blue-900">
                   Clinical disclaimer: This tool is for research and decision
-                  support only.
+                  support only. It is not a substitute for diagnosis by a
+                  qualified clinician.
                 </div>
               </div>
             )}
