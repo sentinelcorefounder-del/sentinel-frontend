@@ -353,13 +353,19 @@ export default function Page() {
               )}
             </section>
 
-            <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-              <h3 className="text-base font-semibold text-slate-900">
+            <section className="rounded-3xl border border-amber-200 bg-amber-50 p-6 shadow-sm">
+              <h3 className="text-base font-semibold text-amber-900">
                 Clinical disclaimer
               </h3>
-              <p className="mt-2 text-sm leading-6 text-slate-600">
-                This application is for research and decision-support only. It
-                does not replace diagnosis by a qualified clinician.
+              <p className="mt-2 text-sm leading-6 text-amber-900">
+                Sentinel AI evaluates retinal images only for diabetic
+                retinopathy referral risk. It is not designed to detect,
+                diagnose, or rule out other retinal or ophthalmic conditions. As
+                a result, images with non-diabetic retinal abnormalities may
+                still be classified as referable or non-referable diabetic
+                retinopathy. This tool is intended for research and decision
+                support only and must not replace clinical assessment by a
+                qualified eye care professional.
               </p>
             </section>
           </aside>
